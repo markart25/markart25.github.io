@@ -1,0 +1,1 @@
+Basic Open-Source Intelligence Framework. You tell it what you've got — name, username, email, phone — and it derives extra fields and sweeps the web for more. Username enumeration runs against the community WhatsMyName database (600+ sites, cached locally) with a quick mode of ~30 high-signal sites or a full thorough sweep. Single-file, stdlib-only by design.

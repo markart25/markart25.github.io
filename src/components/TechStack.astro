@@ -1,0 +1,12 @@
+---
+import { SITE } from '../config';
+
+// skillicons.dev — the same service the GitHub profile README uses,
+// so the stack here always matches. Edit the list in src/config.ts.
+const src = `https://skillicons.dev/icons?i=${SITE.techStack.join(',')}&perline=${SITE.techPerLine}`;
+---
+
+<div class="stack">
+  <span class="stack-label">// tech_stack</span>
+  <img src={src} alt={`Tech stack: ${SITE.techStack.join(', ')}`} loading="eager" />
+</div>

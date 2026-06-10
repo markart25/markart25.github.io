@@ -1,0 +1,1 @@
+My Arch + Hyprland dotfiles: kitty, wofi, waybar, mako, zsh, all colour-themed through pywal so a single wallpaper change re-skins the whole desktop. The README doubles as a full install guide. This website works the same way — its palette is extracted from the wallpaper at build time.

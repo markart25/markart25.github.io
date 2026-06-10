@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.astro/
+
+# generated from the wallpaper on every build — never edit by hand
+src/styles/palette.css
+src/data/wallpaper.json
+public/favicon.svg

@@ -1,0 +1,1 @@
+My take on a terminal text editor — nano-style, written in Python with curses. It has a line-number gutter, auto-themes itself with pywal so it matches the rest of the rice, and reads user config from `~/.config/mste/config.conf`. Packaged on the AUR, versioned properly with tags and releases.

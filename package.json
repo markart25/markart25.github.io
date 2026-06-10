@@ -1,0 +1,27 @@
+{
+  "name": "markfolio",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "markart25's auto-syncing project portfolio — pywal-style theming from the wallpaper",
+  "scripts": {
+    "palette": "node scripts/extract-palette.mjs",
+    "dev": "npm run palette && astro dev",
+    "build": "npm run palette && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.0.0",
+    "@fontsource-variable/inter": "^5.0.0",
+    "@fontsource-variable/jetbrains-mono": "^5.0.0",
+    "astro": "^5.0.0",
+    "marked": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "jpeg-js": "^0.4.4",
+    "pngjs": "^7.0.0"
+  }
+}

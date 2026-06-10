@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import TechStack from '../components/TechStack.astro';
+import ProjectGrid from '../components/ProjectGrid.tsx';
+import { getProjectCards } from '../lib/github';
+import { LANG_COLORS } from '../lib/langColors';
+import { SITE } from '../config';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const projects = await getProjectCards(base);
+---
+
+<Base path="~/projects">
+  <!-- hero sits directly on the wallpaper -->
+  <section class="hero">
+    <p class="prompt mono"><span class="u">{SITE.name.toLowerCase()}</span>@<span class="h">arch</span>:~$ whoami</p>
+    <h1><span class="typed">{SITE.tagline}</span></h1>
+    <TechStack />
+  </section>
+
+  <!-- the blurred, darkened middle column -->
+  <main class="column glass">
+    <div class="section-head">
+      <h2>projects</h2>
+      <span class="mono" style="font-size:12.5px;color:var(--fg-dim)">{projects.length} repos</span>
+    </div>
+    <p class="section-sub">
+      Pulled straight from GitHub on every build — push a new public repo and it shows up here
+      with its own page, no edits needed.
+    </p>
+    <ProjectGrid client:load projects={projects} base={base} langColors={LANG_COLORS} />
+  </main>
+</Base>

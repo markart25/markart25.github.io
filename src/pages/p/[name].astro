@@ -1,0 +1,89 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getProjects, coverImage } from '../../lib/github';
+import { LANG_COLORS, fmtDate } from '../../lib/langColors';
+import { SITE } from '../../config';
+import { marked } from 'marked';
+
+// One page per repo — new public repos get a page automatically on the next build.
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((p) => ({ params: { name: p.name }, props: { p } }));
+}
+
+const { p } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// READMEs use repo-relative links/images; point those at GitHub so they work here.
+function absolutize(md: string): string {
+  const raw = `https://raw.githubusercontent.com/${SITE.username}/${p.name}/HEAD/`;
+  const blob = `https://github.com/${SITE.username}/${p.name}/blob/HEAD/`;
+  return md
+    .replace(/(!\[[^\]]*\]\()(?!https?:\/\/|data:|#)\.?\/?/g, `$1${raw}`)
+    .replace(/((?<!!)\[[^\]]*\]\()(?!https?:\/\/|mailto:|#)\.?\/?/g, `$1${blob}`)
+    .replace(/(src=["'])(?!https?:\/\/|data:)\.?\/?/g, `$1${raw}`);
+}
+
+const readmeHtml = p.readme ? await marked.parse(absolutize(p.readme), { gfm: true }) : '';
+
+// Optional hand-written notes: src/content/notes/<repo>.md
+const noteModules = import.meta.glob<{ Content: any }>('../../content/notes/*.md', { eager: true });
+const Note = noteModules[`../../content/notes/${p.name}.md`]?.Content;
+
+const langDot = (p.language && LANG_COLORS[p.language]) || 'var(--fg-dim)';
+const cover = coverImage(p.name, base);
+---
+
+<Base title={`${p.name} — ${SITE.username}`} description={p.description || `${p.name} by ${SITE.username}`} path={`~/projects/${p.name}`}>
+  <section class="hero" style="padding-bottom: 24px; min-height: 0;"></section>
+
+  <main class="column glass">
+    <a class="backlink" href={`${base}/`}>← cd ~/projects</a>
+
+    <img class="repo-cover" src={cover} alt={`${p.name} cover`} width={1200} height={600} loading="eager" />
+
+    <div class="repo-head">
+      <h1><span class="slash">{SITE.username}/</span>{p.name}</h1>
+      {p.description && <p class="desc">{p.description}</p>}
+    </div>
+
+    <div class="pills">
+      {p.language && (
+        <span class="pill"><span class="dot" style={`background:${langDot}`}></span>{p.language}</span>
+      )}
+      <span class="pill">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M11.93 8.5a4.002 4.002 0 0 1-7.86 0H.75a.75.75 0 0 1 0-1.5h3.32a4.002 4.002 0 0 1 7.86 0h3.32a.75.75 0 0 1 0 1.5Zm-1.43-.75a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"/></svg>
+        {p.commits} commits
+      </span>
+      <span class="pill">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/></svg>
+        {p.stars} stars
+      </span>
+      <span class="pill">updated {fmtDate(p.pushed_at)}</span>
+      {p.archived && <span class="pill warn">archived</span>}
+    </div>
+
+    {p.topics.length > 0 && (
+      <div class="topics">
+        {p.topics.map((t) => <span class="topic">#{t}</span>)}
+      </div>
+    )}
+
+    <div class="btnrow">
+      <a class="btn" href={p.html_url} target="_blank" rel="noopener">view on github ↗</a>
+      {p.homepage && <a class="btn ghost" href={p.homepage} target="_blank" rel="noopener">live site ↗</a>}
+    </div>
+
+    {Note && (
+      <aside class="notes">
+        <span class="nlabel">field notes</span>
+        <Note />
+      </aside>
+    )}
+
+    <p class="readme-label mono"><b>README.md</b> — rendered from the repo</p>
+    {readmeHtml
+      ? <article class="md" set:html={readmeHtml} />
+      : <p class="empty-readme">This repo doesn't have a README yet.</p>}
+  </main>
+</Base>

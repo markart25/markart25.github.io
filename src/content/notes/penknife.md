@@ -1,0 +1,1 @@
+A curses TUI that launches pentest tools so I stop retyping the same flags — 26 tools and 72 presets out of the box, zero external dependencies. The amber ANSI Shadow banner matches my terminal palette. Published on the AUR.

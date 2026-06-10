@@ -1,0 +1,54 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+import { SITE } from '../config';
+import wallpaper from '../data/wallpaper.json';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** shown in the topbar after mark@arch: */
+  path?: string;
+}
+
+const { title = SITE.title, description = SITE.description, path = '~' } = Astro.props;
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const wallpaperUrl = wallpaper.file ? `${base}/${wallpaper.file}` : null;
+const ghUrl = `https://github.com/${SITE.username}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta name="color-scheme" content="dark" />
+    {wallpaperUrl && <link rel="preload" as="image" href={wallpaperUrl} />}
+  </head>
+  <body style={wallpaperUrl ? `--wallpaper: url('${wallpaperUrl}')` : '--wallpaper: none'}>
+    <div class="topbar-wrap">
+      <header class="topbar glass">
+        <span class="host"><b>{SITE.username.toLowerCase().startsWith('mark') ? 'mark' : SITE.username}</b>@arch:<span>{path}</span></span>
+        <nav>
+          <a href={`${base}/`}>projects</a>
+          <a href={ghUrl} target="_blank" rel="noopener">github ↗</a>
+        </nav>
+      </header>
+    </div>
+
+    <slot />
+
+    <footer>
+      <span>© {new Date().getFullYear()} {SITE.name}</span>
+      <span>theme auto-extracted from the wallpaper, pywal-style</span>
+      <span>synced from <a href={ghUrl} target="_blank" rel="noopener">github.com/{SITE.username}</a></span>
+    </footer>
+  </body>
+</html>
